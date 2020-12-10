@@ -8,12 +8,17 @@ const users = [
     username: 'Litha'
   }
 ]
+const rooms = []
 io.on('connect', function(socket){
   console.log(`Socket io client connected`);
   socket.emit('init', users)
   socket.on('addUser', (payload)=>{
     users.push({ username: payload })
     io.emit('CreateUser', payload)  //jalan di semua client
+  })
+  socket.on('addRoom', (payload) => {
+    rooms.push({name: payload.name, countPlayer: payload.countPlayer})
+    io.emit('setRoom', rooms)
   })
 })
 
