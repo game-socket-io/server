@@ -9,6 +9,8 @@ const users = [
   }
 ]
 const rooms = []
+// nanti hasilnya kurang lebih kek gini --> [ { name: 'litha-room', maxPlayer: '2', admin: 'litha', users: [] } ]
+
 io.on('connect', function(socket){
   console.log(`Socket io client connected`);
   socket.emit('init', { users, rooms })
@@ -19,8 +21,19 @@ io.on('connect', function(socket){
 
   socket.on('addRoom', payload => {
     console.log(payload, '<<<ROOMS')
-    rooms.push(payload)
+    rooms.push({
+      name: payload.name,
+      maxPlayer: payload.countPlayer,
+      admin: payload.admin,
+      users: []
+    })
+    console.log(rooms)
     io.emit('setRoom', rooms)
+  })
+  socket.on('join-room', payload => {
+    socket.join(payload['room-name'], function(){
+      console.log(socket.rooms);
+    })
   })
 })
 server.listen(PORT, ()=>{
