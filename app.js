@@ -20,7 +20,7 @@ io.on('connect', function(socket){
   })
 
   socket.on('addRoom', payload => {
-    console.log(payload, '<<<ROOMS')
+    // console.log(payload, '<<<ROOMS')
     rooms.push({
       name: payload.name,
       maxPlayer: payload.countPlayer,
@@ -34,8 +34,11 @@ io.on('connect', function(socket){
     socket.join(payload.roomName, function(){
       // console.log(socket.rooms, '<<<rooms');
       let roomIndex = rooms.findIndex((i) => i.name == payload.roomName)
-      rooms[roomIndex].users.push(payload.username)
-      // console.log(rooms);
+      if(!rooms[roomIndex].users.includes(payload.username) && 
+          rooms[roomIndex].users.length < +rooms[roomIndex].maxPlayer) {
+        rooms[roomIndex].users.push(payload.username)
+      }
+      console.log(rooms[roomIndex]);
       io.sockets.in(payload.roomName).emit('roomDetail', rooms[roomIndex])
     })
   })
