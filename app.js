@@ -31,8 +31,12 @@ io.on('connect', function(socket){
     io.emit('setRoom', rooms)
   })
   socket.on('join-room', payload => {
-    socket.join(payload['room-name'], function(){
-      console.log(socket.rooms);
+    socket.join(payload.roomName, function(){
+      // console.log(socket.rooms, '<<<rooms');
+      let roomIndex = rooms.findIndex((i) => i.name == payload.roomName)
+      rooms[roomIndex].users.push(payload.username)
+      // console.log(rooms);
+      io.sockets.in(payload.roomName).emit('roomDetail', rooms[roomIndex])
     })
   })
 })
